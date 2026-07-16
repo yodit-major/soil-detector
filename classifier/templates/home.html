@@ -1,16 +1,43 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soil Detector</title>
-</head>
 
+    <link rel="stylesheet" href="{% static 'classifier/css/style.css' %}">
+</head>
 <body>
 
-    <h1>🌱 Soil Detector AI</h1>
+    <nav>
+    <h2>🌱 Soil Detector</h2>
+</nav>
+
+<div class="hero">
+
+    <h1>AI Soil Classification</h1>
 
     <p>
-        Upload your soil image and discover your soil type.
+        Upload a soil image and let Artificial Intelligence identify the soil type instantly.
     </p>
+
+    <form method="POST" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <input type="file" name="image" accept="image/*">
+
+    <br><br>
+
+    <button type="submit">Predict Soil Type</button>
+
+</form>
+{% if result %}
+    <h2>Prediction Result</h2>
+    <p>{{ result }}</p>
+{% endif %}
+</div>
 
 </body>
 </html>
