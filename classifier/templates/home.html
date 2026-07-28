@@ -1,43 +1,50 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soil Detector</title>
+    <title>Soil Type Classifier</title>
+
+    {% load static %}
 
     <link rel="stylesheet" href="{% static 'classifier/css/style.css' %}">
 </head>
+
 <body>
 
-    <nav>
-    <h2>🌱 Soil Detector</h2>
-</nav>
+    <div class="container">
 
-<div class="hero">
+        <h1>🌱 Soil Type Classifier</h1>
 
-    <h1>AI Soil Classification</h1>
+        <form method="POST" enctype="multipart/form-data">
 
-    <p>
-        Upload a soil image and let Artificial Intelligence identify the soil type instantly.
-    </p>
+            {% csrf_token %}
 
-    <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" required>
 
-    {% csrf_token %}
+            <br><br>
 
-    <input type="file" name="image" accept="image/*">
+            <button type="submit">
+                Predict Soil Type
+            </button>
 
-    <br><br>
+        </form>
 
-    <button type="submit">Predict Soil Type</button>
+        {% if image %}
 
-</form>
-{% if result %}
-    <h2>Prediction Result</h2>
-    <p>{{ result }}</p>
-{% endif %}
-</div>
+            <hr>
+
+            <h2>Uploaded Image</h2>
+
+            <img src="{{ image }}" width="300">
+
+            <h2>Prediction</h2>
+
+            <h3>{{ result }}</h3>
+
+            <p><strong>Confidence:</strong> {{ confidence }}%</p>
+
+        {% endif %}
+
+    </div>
 
 </body>
 </html>

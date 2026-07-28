@@ -1,8 +1,22 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
-import cv2
+
+import tensorflow as tf
 import numpy as np
-import os
+
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+
+# Load the model once when Django starts
+model = tf.keras.models.load_model("ml_models/soil_model.keras")
+
+# Class labels (same order as train_generator.class_indices)
+class_names = [
+    "Black Soil",
+    "Cinder Soil",
+    "Laterite Soil",
+    "Peat Soil",
+    "Yellow Soil"
+]
 
 
 def home(request):
@@ -13,31 +27,38 @@ def home(request):
         image = request.FILES["image"]
 
         fs = FileSystemStorage()
+
         filename = fs.save(image.name, image)
 
         image_url = fs.url(filename)
 
-        # Get image path
         image_path = fs.path(filename)
 
-        # Read image
-        img = cv2.imread(image_path)
+        # Load image
+        img = load_img(image_path, target_size=(224, 224))
 
-        # Resize image
-        img = cv2.resize(img, (300, 300))
+        # Convert image to NumPy array
+        img_array = img_to_array(img)
 
-        # Calculate average color
-        avg = img.mean(axis=0).mean(axis=0)
+        # Add batch dimension
+        img_array = np.expand_dims(img_array, axis=0)
 
-        b, g, r = avg
+        # Normalize
+        img_array = img_array / 255.0
 
-        # Your current rule
-        if r > 120 and g > 100:
-            result = "🌾 DRY Soil"
-        else:
-            result = "🌿 HEALTHY or WET Soil"
+        # Predict
+        prediction = model.predict(img_array)
 
-        context["image_url"] = image_url
-        context["result"] = result
+        class_index = np.argmax(prediction)
+
+        confidence = float(np.max(prediction) * 100)
+
+        result = class_names[class_index]
+
+        context = {
+            "image": image_url,
+            "result": result,
+            "confidence": round(confidence, 2),
+        }
 
     return render(request, "home.html", context)
