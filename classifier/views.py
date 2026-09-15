@@ -7,7 +7,7 @@ import numpy as np
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
 # Load the model once when Django starts
-model = tf.keras.models.load_model("ml_models/soil_model.keras")
+model = tf.keras.models.load_model("ml_models/best_peat_augmented_model.keras")
 
 # Class labels (same order as train_generator.class_indices)
 class_names = [

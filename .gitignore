@@ -3,12 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Django
-*.sqlite3
-db.sqlite3
-
 # Virtual environment
 venv/
+
+# Django
+*.sqlite3
+
+# Environment variables
 .env
 
 # VS Code
@@ -18,8 +19,8 @@ venv/
 .DS_Store
 Thumbs.db
 
-
-# media
+# User-uploaded media
 media/
 
+# Machine learning models
 ml_models/
